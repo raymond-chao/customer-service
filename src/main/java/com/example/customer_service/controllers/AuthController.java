@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,10 +29,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        Customer customer = customerService.getCustomerByEmail(loginRequest.email());
-        if(!passwordEncoder.matches(loginRequest.password(), customer.getPassword())) {
+        Optional<Customer> customerOpt = customerService.findByEmailOptional(loginRequest.email());
+        if(customerOpt.isEmpty() || !passwordEncoder.matches(loginRequest.password(), customerOpt.get().getPassword())) {
             return ResponseEntity.status(401).body("Fel email eller lösenord");
         }
+
+        Customer customer = customerOpt.get();
         String token = jwtService.generateToken(customer.getEmail());
         return ResponseEntity.ok(Map.of("token", token));
     }
