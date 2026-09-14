@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -42,6 +43,7 @@ public class CustomerService {
         return customerRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new NotFoundException("Customer not found: " + email));
+
     }
 
 
@@ -56,6 +58,9 @@ public class CustomerService {
         customer.setPassword(
                 passwordEncoder.encode(request.password())
         );
+        if(customerRepository.existsByEmail(request.email())) {
+            throw new ConflictException("Customer already exists: " + request.email());
+        }
 
         return customerRepository.save(customer);
     }
@@ -95,5 +100,8 @@ public class CustomerService {
         }
 
         customerRepository.delete(customer);
+    }
+    public Optional<Customer> findByEmailOptional(String email) {
+        return customerRepository.findByEmail(email);
     }
 }
