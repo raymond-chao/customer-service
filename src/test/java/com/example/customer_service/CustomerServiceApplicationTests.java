@@ -42,7 +42,7 @@ class CustomerServiceApplicationTests {
     @Test
     void ingetNamnGer400() throws Exception {
         mockMvc.perform(post("/api/customers").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content("{\"name\":\" \" ,\"email\":\"test@test.com\",\"phoneNumber\":\"0712312312\",\"password\":\"test\"}"))
+                .content("{\"name\":\"\" ,\"email\":\"test@test.com\",\"phoneNumber\":\"0712312312\",\"password\":\"test\"}"))
                 .andExpect(status().isBadRequest());
     }
 
