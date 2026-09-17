@@ -48,10 +48,10 @@ class CustomerServiceApplicationTests {
 
     @Test
     void raderaKundMedAktivaBokningarGer409() throws Exception {
-    customerRepository.save(new Customer(null, "Ray", "ray@test.com", "07", "hash"));
+    Customer c = customerRepository.save(new Customer(null, "Ray", "ray@test.com", "07", "hash"));
     when(bookingClient.hasActiveBookings("ray@test.com")).thenReturn(true);
 
-    mockMvc.perform(delete("/api/customers/1"))
+    mockMvc.perform(delete("/api/customers/" + c.getId()))
             .andExpect(status().isConflict());
     }
 
